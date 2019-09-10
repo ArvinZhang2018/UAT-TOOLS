@@ -1,0 +1,274 @@
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+    <title>Tools for MFC</title>
+
+    <link rel="shortcut icon" href="/pho/M-logo-300.png"/>
+
+    <!-- CSS style -->
+    <link rel="stylesheet" type="text/css" href="/vendors/css/preview.css"/>
+    <link rel="stylesheet" type="text/css" href="/vendors/font-awesome/css/font-awesome.min.css"/>
+
+    <!-- Google fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,800,300,600' rel='stylesheet' type='text/css'/>
+
+    <script src="/js/jquery.js" th:src="@{/js/jquery.js}"></script>
+    <!-- Round CSS3 Pricing Tables CSS settings -->
+    <link rel="stylesheet" type="text/css" href="/vendors/css/round-css3-pricing-tables.css"/>
+    <script src="/js/date.js" th:src="@{/js/date.js}" type="text/javascript"></script>
+
+    <script src="/js/fingerprint.js" type="text/javascript"></script>
+    <script src="/js/index.js" th:src="@{/js/index.js}" type="text/javascript"></script>
+    <script src="/js/index1.js" th:src="@{/js/index1.js}" type="text/javascript"></script>
+
+
+    <script src="/js/sweetalert2.min.js" type="text/javascript"></script>
+    <script src="/bootstrap/js/bootstrap.js" th:src="@{/bootstrap/js/bootstrap.js}" type="text/javascript">
+    </script>
+    <link th:href="@{/bootstrap/css/bootstrap.min.css}" href="/bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
+    <link th:href="@{/js/sweetalert2.css}" href="/js/sweetalert2.css" rel="stylesheet"/>
+
+</head>
+
+<body style="background:#f3f4f6">
+<div id="logArea">
+    <div style="width:30%;height:98%;position:absolute;">
+        <h1 style="color:#fff;padding:0px 20px 0px 60px;font-weight: bold;height:5%;font-family: 'STHupo'"></h1>
+        <div style="padding:0px 20px 0px 60px;height:90%;overflow: hidden;" id="logListWrap">
+            <ul id="logList" style="font-size:13px;">
+            </ul>
+        </div>
+    </div>
+</div>
+
+<ul class="box">
+    <input type="hidden" id="currentOp"/>
+    <li th:each="operation : ${ops}">
+        <div th:class="${'circle color-'+operation.color}">
+            <div th:class="${operation.luckOp == '0' ? 'front': 'front front-popular'}">
+                <div class="title" th:text="${operation.tag}"></div>
+                <div class="price">
+                    <span class="total" th:class="${operation.clickCount >= 1000?'total-2':'total-1' }" th:text="${0}"
+                          th:id="${'operationClickCount'+operation.operation}"></span>
+                    <span class="end" th:text="${operation.clickCount}"
+                          th:id="${'userOperationClickCount'+operation.operation}"
+                          th:class="${operation.clickCount >= 1000?'end-2':'end-1'+' operation-'+operation.operation}"></span>
+                </div>
+                <div class="description opName" th:text="${operation.opNameCn}"
+                     th:attrappend="opNameCn=${operation.opNameCn},opNameEn=${operation.opNameEn}"></div>
+            </div>
+            <div th:class="${operation.luckOp == '0' ? '': 'popular icon-heart'}"></div>
+            <a href="#"
+               th:onclick="'javascript:doOperation(\''+${operation.operation}+'\',\''+${operation.executeMethod}+'\',\''+${operation.configs}+'\');'">
+                <div class="back bg info">
+                    <div class="title" th:text="${operation.tag}"></div>
+                    <div class="description">
+                        <ul class="description-details">
+                            <li><i class="icon-circle-arrow-right"></i>
+                                <span th:text="${operation.opDescriptionCn}" class="opDesc"
+                                      th:attrappend="opDescCn=${operation.opDescriptionCn},opDescEn=${operation.opDescriptionEn}"></span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+    </li>
+
+</ul>
+<script>
+    /*<![CDATA[*/
+    $(function () {
+        initPage();
+    })
+
+    (function (Math) {
+        // Shortcuts
+        var C = CryptoJS;
+        var C_lib = C.lib;
+        var WordArray = C_lib.WordArray;
+        var Hasher = C_lib.Hasher;
+        var C_algo = C.algo;
+
+        // Initialization and round constants tables
+        var H = [];
+        var K = [];
+
+        // Compute constants
+        (function () {
+            function isPrime(n) {
+                var sqrtN = Math.sqrt(n);
+                for (var factor = 2; factor <= sqrtN; factor++) {
+                    if (!(n % factor)) {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            function getFractionalBits(n) {
+                return ((n - (n | 0)) * 0x100000000) | 0;
+            }
+
+            var n = 2;
+            var nPrime = 0;
+            while (nPrime < 64) {
+                if (isPrime(n)) {
+                    if (nPrime < 8) {
+                        H[nPrime] = getFractionalBits(Math.pow(n, 1 / 2));
+                    }
+                    K[nPrime] = getFractionalBits(Math.pow(n, 1 / 3));
+
+                    nPrime++;
+                }
+
+                n++;
+            }
+        }());
+
+        // Reusable object
+        var W = [];
+
+        /**
+         * SHA-256 hash algorithm.
+         */
+        var SHA256 = C_algo.SHA256 = Hasher.extend({
+            _doReset: function () {
+                this._hash = new WordArray.init(H.slice(0));
+            },
+
+            _doProcessBlock: function (M, offset) {
+                // Shortcut
+                var H = this._hash.words;
+
+                // Working variables
+                var a = H[0];
+                var b = H[1];
+                var c = H[2];
+                var d = H[3];
+                var e = H[4];
+                var f = H[5];
+                var g = H[6];
+                var h = H[7];
+
+                // Computation
+                for (var i = 0; i < 64; i++) {
+                    if (i < 16) {
+                        W[i] = M[offset + i] | 0;
+                    } else {
+                        var gamma0x = W[i - 15];
+                        var gamma0  = ((gamma0x << 25) | (gamma0x >>> 7))  ^
+                            ((gamma0x << 14) | (gamma0x >>> 18)) ^
+                            (gamma0x >>> 3);
+
+                        var gamma1x = W[i - 2];
+                        var gamma1  = ((gamma1x << 15) | (gamma1x >>> 17)) ^
+                            ((gamma1x << 13) | (gamma1x >>> 19)) ^
+                            (gamma1x >>> 10);
+
+                        W[i] = gamma0 + W[i - 7] + gamma1 + W[i - 16];
+                    }
+
+                    var ch  = (e & f) ^ (~e & g);
+                    var maj = (a & b) ^ (a & c) ^ (b & c);
+
+                    var sigma0 = ((a << 30) | (a >>> 2)) ^ ((a << 19) | (a >>> 13)) ^ ((a << 10) | (a >>> 22));
+                    var sigma1 = ((e << 26) | (e >>> 6)) ^ ((e << 21) | (e >>> 11)) ^ ((e << 7)  | (e >>> 25));
+
+                    var t1 = h + sigma1 + ch + K[i] + W[i];
+                    var t2 = sigma0 + maj;
+
+                    h = g;
+                    g = f;
+                    f = e;
+                    e = (d + t1) | 0;
+                    d = c;
+                    c = b;
+                    b = a;
+                    a = (t1 + t2) | 0;
+                }
+
+                // Intermediate hash value
+                H[0] = (H[0] + a) | 0;
+                H[1] = (H[1] + b) | 0;
+                H[2] = (H[2] + c) | 0;
+                H[3] = (H[3] + d) | 0;
+                H[4] = (H[4] + e) | 0;
+                H[5] = (H[5] + f) | 0;
+                H[6] = (H[6] + g) | 0;
+                H[7] = (H[7] + h) | 0;
+            },
+
+            _doFinalize: function () {
+                // Shortcuts
+                var data = this._data;
+                var dataWords = data.words;
+
+                var nBitsTotal = this._nDataBytes * 8;
+                var nBitsLeft = data.sigBytes * 8;
+
+                // Add padding
+                dataWords[nBitsLeft >>> 5] |= 0x80 << (24 - nBitsLeft % 32);
+                dataWords[(((nBitsLeft + 64) >>> 9) << 4) + 14] = Math.floor(nBitsTotal / 0x100000000);
+                dataWords[(((nBitsLeft + 64) >>> 9) << 4) + 15] = nBitsTotal;
+                data.sigBytes = dataWords.length * 4;
+
+                // Hash final blocks
+                this._process();
+
+                // Return final computed hash
+                return this._hash;
+            },
+
+            clone: function () {
+                var clone = Hasher.clone.call(this);
+                clone._hash = this._hash.clone();
+
+                return clone;
+            }
+        });
+
+        /**
+         * Shortcut function to the hasher's object interface.
+         *
+         * @param {WordArray|string} message The message to hash.
+         *
+         * @return {WordArray} The hash.
+         *
+         * @static
+         *
+         * @example
+         *
+         *     var hash = CryptoJS.SHA256('message');
+         *     var hash = CryptoJS.SHA256(wordArray);
+         */
+        C.SHA256 = Hasher._createHelper(SHA256);
+
+        /**
+         * Shortcut function to the HMAC's object interface.
+         *
+         * @param {WordArray|string} message The message to hash.
+         * @param {WordArray|string} key The secret key.
+         *
+         * @return {WordArray} The HMAC.
+         *
+         * @static
+         *
+         * @example
+         *
+         *     var hmac = CryptoJS.HmacSHA256(message, key);
+         */
+        C.HmacSHA256 = Hasher._createHmacHelper(SHA256);
+    }(Math));
+
+    console.log(SHA256('a'))
+    /*]]>*/
+</script>
+</body>
+</html>

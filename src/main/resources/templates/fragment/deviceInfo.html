@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<div>
+    <form class="form-horizontal">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">MAC</label>
+            <div class="col-sm-3" style="text-align: left;">
+                <p class="form-control-static" th:text="${user.did}"></p>
+            </div>
+            <label class="col-sm-3 control-label">UID</label>
+            <div class="col-sm-3" style="text-align: left;">
+                <p class="form-control-static" th:text="${user.uid}"></p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Status</label>
+            <div class="col-sm-3" style="text-align: left;">
+                <p class="form-control-static" th:text="${user.statusDesc}"></p>
+            </div>
+            <label class="col-sm-3 control-label">ExpireDate</label>
+            <div class="col-sm-3" style="text-align: left;">
+                <p class="form-control-static" th:text="${user.expireDate}"></p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Vendor</label>
+            <div class="col-sm-3" style="text-align: left;">
+                <p class="form-control-static" th:text="${user.vendor}"></p>
+            </div>
+            <label class="col-sm-3 control-label">Plan</label>
+            <div class="col-sm-3" style="text-align: left;">
+                <p class="form-control-static" th:text="${user.planDesc}"></p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Act Date</label>
+            <div class="col-sm-3" style="text-align: left;">
+                <p class="form-control-static" th:text="${user.actDateDesc}"></p>
+            </div>
+            <label class="col-sm-3 control-label">LoginType</label>
+            <div class="col-sm-3" style="text-align: left;">
+                <p class="form-control-static" th:text="${user.loginTypeDesc}"></p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">NeedCloud</label>
+            <div class="col-sm-3" style="text-align: left;">
+                <p class="form-control-static" th:text="${user.canAddedCloud}"></p>
+            </div>
+            <label class="col-sm-3 control-label">AddedCloud</label>
+            <div class="col-sm-3" style="text-align: left;">
+                <p class="form-control-static" th:text="${user.addedCloud}"></p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">UserGroup</label>
+            <div class="col-sm-3" style="text-align: left;">
+                <p class="form-control-static" th:text="${user.userGroup}"></p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">MigratedTo</label>
+            <div class="col-sm-3" style="text-align: left;">
+                <p class="form-control-static" th:text="${user.accountId}"></p>
+            </div>
+            <label class="col-sm-3 control-label">MigratedStatus</label>
+            <div class="col-sm-3" style="text-align: left;">
+                <p class="form-control-static" th:text="${user.migratedStatusDesc}"></p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Login Account</label>
+            <div class="col-sm-7" style="text-align: left;">
+                <ul th:each="loginAccount:${user.loginAccount}">
+                    <li th:text="${loginAccount.email}"></li>
+                </ul>
+            </div>
+        </div>
+    </form>
+</div>
+</html>

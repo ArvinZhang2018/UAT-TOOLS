@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<div>
+    <form class="form-horizontal">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">LoginId</label>
+            <div class="col-sm-3" style="text-align: left;">
+                <p class="form-control-static" th:text="${account.loginId}"></p>
+            </div>
+            <label class="col-sm-3 control-label">UID</label>
+            <div class="col-sm-3" style="text-align: left;">
+                <p class="form-control-static" th:text="${account.uid}"></p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Plan</label>
+            <div class="col-sm-3" style="text-align: left;">
+                <p class="form-control-static" th:text="${account.productName}"></p>
+            </div>
+            <label class="col-sm-3 control-label">Status</label>
+            <div class="col-sm-3" style="text-align: left;">
+                <p class="form-control-static" th:text="${account.statusDesc}"></p>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label">ExpireDate</label>
+            <div class="col-sm-3" style="text-align: left;">
+                <p class="form-control-static" th:text="${account.expireTsDesc}"></p>
+            </div>
+            <label class="col-sm-3 control-label">AvailableDays</label>
+            <div class="col-sm-3" style="text-align: left;">
+                <p class="form-control-static" th:text="${account.availableServiceTimeDesc}"></p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">LoginApp</label>
+            <div class="col-sm-3" style="text-align: left;">
+                <p class="form-control-static" th:text="${account.loginApp}"></p>
+            </div>
+            <label class="col-sm-3 control-label">Get trial period</label>
+            <div class="col-sm-3" style="text-align: left;">
+                <p class="form-control-static" th:text="${account.trialled}"></p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Renewing</label>
+            <div class="col-sm-3" style="text-align: left;">
+                <p class="form-control-static" th:text="${account.renewing}"></p>
+            </div>
+            <label class="col-sm-3 control-label">Missing Cloud</label>
+            <div class="col-sm-3" style="text-align: left;">
+                <p class="form-control-static" th:text="${account.missingCloud}"></p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Login Sessions</label>
+        </div>
+        <div class="form-group" th:each="session:${account.sessions}">
+            <label class="col-sm-2 control-label">Did</label>
+            <div class="col-sm-2" style="text-align: left;">
+                <p class="form-control-static" th:text="${session.did}"></p>
+            </div>
+            <label class="col-sm-2 control-label">Name</label>
+            <div class="col-sm-2" style="text-align: left;">
+                <p class="form-control-static" th:text="${session.subAccountName}"></p>
+            </div>
+            <label class="col-sm-2 control-label">Status</label>
+            <div class="col-sm-2" style="text-align: left;">
+                <p class="form-control-static" th:text="${session.statusDesc}"></p>
+            </div>
+        </div>
+    </form>
+</div>
+</html>
